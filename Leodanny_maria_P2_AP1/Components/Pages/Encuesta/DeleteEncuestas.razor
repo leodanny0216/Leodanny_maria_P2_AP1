@@ -1,0 +1,100 @@
+﻿@page "/Delete/encuestas/{EncuestaId:int}"
+@using Leodanny_maria_P2_AP1.Models
+@using Leodanny_maria_P2_AP1.Services
+@rendermode InteractiveServer
+@inject EncuestasService encuestasService
+@inject NavigationManager navigation
+
+<PageTitle>Eliminar Encuesta</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header text-center">
+            <h5 class="card-title">Eliminar Encuesta</h5>
+        </div>
+
+        <div class="card-body">
+            @if (Encuesta == null)
+            {
+                <div class="alert alert-warning" role="alert">
+                    Cargando detalles de la encuesta...
+                </div>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <label class="form-label"><strong>Fecha:</strong></label>
+                    <p>@Encuesta.Fecha.ToShortDateString()</p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Asignatura:</strong></label>
+                    <p>@Encuesta.Asignatura</p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Monto Total:</strong></label>
+                    <p>@Encuesta.Monto.ToString("C")</p>
+                </div>
+
+                <div class="border border-success p-3 mt-3">
+                    <h4>Detalles de Ciudades</h4>
+                    <table class="table table-light">
+                        <thead class="table-striped">
+                            <tr class="text-center">
+                                <th>Ciudad</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Encuesta.encuestasDetalle)
+                            {
+                                <tr class="text-center">
+                                    <td>@detalle.CiudadId</td>
+                                    <td>@detalle.Monto.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="card-footer text-center mt-2">
+            <button class="btn btn-outline-danger" @onclick="ConfirmarEliminacion">Eliminar</button>
+            <a href="/Encuestas/IndexEncuestas" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int EncuestaId { get; set; }
+
+    public Encuestas Encuesta { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar la encuesta existente
+        Encuesta = await encuestasService.Buscar(EncuestaId);
+        if (Encuesta == null)
+        {
+            navigation.NavigateTo("/Encuestas/IndexEncuestas");
+        }
+    }
+
+    private async Task ConfirmarEliminacion()
+    {
+        var eliminado = await encuestasService.Eliminar(EncuestaId);
+        if (eliminado)
+        {
+
+            navigation.NavigateTo("/Encuestas/IndexEncuestas");
+        }
+        else{}
+        {
+            // Mostrar un mensaje de error si la eliminación falla
+            Console.WriteLine("Error al eliminar la encuesta.");
+        }
+    }
+}
