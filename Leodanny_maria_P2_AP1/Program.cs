@@ -1,5 +1,5 @@
 using Leodanny_maria_P2_AP1.Components;
-using Leodanny_maria_P2_AP1.DAL;
+using Leodanny_maria_P2_AP1.Context;
 using Leodanny_maria_P2_AP1.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +11,8 @@ builder.Services.AddRazorComponents()
 
 var connectionString = builder.Configuration.GetConnectionString("SqlConStr");
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(connectionString));
-builder.Services.AddScoped<ModeloServices>();
+builder.Services.AddScoped<CiudadesServices>();
+builder.Services.AddScoped<EncuestasService>();
 
 var app = builder.Build();
 
